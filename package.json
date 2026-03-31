@@ -1,0 +1,16 @@
+{
+  "name": "seo-tools",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "dev:infra:up": "docker compose -f docker-compose.dev.yml up",
+    "dev:infra:logs": "docker compose -f docker-compose.dev.yml logs -f",
+    "dev": "concurrently  --names \"api,www,app\" --prefix-colors \"blue,green,yellow\" \"pnpm run dev:api\" \"pnpm run dev:www\" \"pnpm run dev:app\"",
+    "dev:api": "pnpm --filter api run start:dev",
+    "dev:www": "pnpm --filter www run dev",
+    "dev:app": "pnpm --filter app run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
