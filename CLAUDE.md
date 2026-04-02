@@ -4,11 +4,13 @@ SEO SaaS. Монорепо pnpm workspaces.
 
 ## Стек
 
+## Стек
+
 - TypeScript везде
-- Backend: NestJS, PostgreSQL, Prisma, Swagger, class-validator, class-transformer, Zod
-- Frontend public: Next.js App Router (маркетинг, лендинг, SEO)
+- Backend: NestJS, PostgreSQL, Prisma, Swagger, class-validator, class-transformer, Zod (apps/api)
+- Frontend public: Next.js App Router: маркетинг, лендинг, SEO (apps/www)
 - Frontend private: React + Vite, React Router, React Hook Form,
-  Zod, TanStack Query, Mantine UI, openapi-react-query
+  Zod, TanStack Query, Mantine UI, openapi-react-query (apps/app)
 - Инфра: Docker
 
 ## Фичи

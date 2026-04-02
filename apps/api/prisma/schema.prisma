@@ -13,8 +13,72 @@ datasource db {
   provider = "postgresql"
 }
 
-model Test {
-  id    Int    @id @default(autoincrement())
-  value String
-  test  Int
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  passwordHash    String?
+  role            UserRole @default(USER)
+  isEmailVerified Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  sessions          Session[]
+  verificationCodes VerificationCode[]
+  oAuthAccounts     OAuthAccount[]
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  ip        String?
+  userAgent String?
+  country   String?
+  city      String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationCode {
+  id        String               @id @default(cuid())
+  type      VerificationCodeType
+  codeHash  String
+  expiresAt DateTime
+  createdAt DateTime             @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([type, userId])
+}
+
+enum VerificationCodeType {
+  EMAIL_CONFIRMATION
+  PASSWORD_RESET
+}
+
+model OAuthAccount {
+  id             String        @id @default(cuid())
+  provider       OAuthProvider
+  providerUserId String
+  createdAt      DateTime      @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+}
+
+enum OAuthProvider {
+  GOOGLE
+  YANDEX
+  GITHUB
 }

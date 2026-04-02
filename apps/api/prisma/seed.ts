@@ -11,14 +11,13 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const result = await prisma.test.createMany({
-    data: [
-      { value: 'test1', test: 1 },
-      { value: 'test2', test: 2 },
-    ],
-  });
-
-  console.log(result);
+  // const result = await prisma.test.createMany({
+  //   data: [
+  //     { value: 'test1', test: 1 },
+  //     { value: 'test2', test: 2 },
+  //   ],
+  // });
+  // console.log(result);
 }
 
 main()

@@ -1,5 +1,5 @@
 import { ConfigModule } from '@nestjs/config';
-import { envSchema } from './config.schema';
+import { envSchema } from './app-config.schema';
 
 export const AppConfigModule = ConfigModule.forRoot({
   isGlobal: true,
