@@ -24,14 +24,14 @@ export class FirstErrorValidationPipe extends ValidationPipe {
 }
 
 const getFirstErrorMessage = (error: ValidationError): string => {
-  const firstChildren = error.children?.[0];
+  const firstChild = error.children?.[0];
 
-  if (!firstChildren) {
+  if (!firstChild) {
     const { property, constraints } = error;
     const message = constraints ? Object.values(constraints)[0] : undefined;
 
     return [property, ...(message ? [message] : [])].join(': ');
   }
 
-  return [error.property, getFirstErrorMessage(firstChildren)].join('.');
+  return [error.property, getFirstErrorMessage(firstChild)].join('.');
 };

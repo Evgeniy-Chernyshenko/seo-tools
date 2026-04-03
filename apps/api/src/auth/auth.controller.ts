@@ -1,14 +1,10 @@
 import {
   Body,
   Controller,
-  Delete,
-  Get,
   HttpCode,
   HttpStatus,
   Ip,
-  Param,
   Post,
-  Headers,
   Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -26,6 +22,7 @@ import {
   ResetPasswordDto,
 } from './auth.dto';
 import { type AppRequest } from 'src/auth/auth.types';
+import { UserAgent } from './decorators/user-agent.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -36,9 +33,9 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async register(
     @Body() dto: RegisterDto,
-    @Ip() ip: string,
-    @Headers('user-agent') userAgent: string,
     @Req() request: AppRequest,
+    @Ip() ip: string,
+    @UserAgent() userAgent?: string,
   ) {
     const { session, rawSessionToken } = await this.authService.register({
       dto,
@@ -55,9 +52,9 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async login(
     @Body() dto: LoginDto,
-    @Ip() ip: string,
-    @Headers('user-agent') userAgent: string,
     @Req() request: AppRequest,
+    @Ip() ip: string,
+    @UserAgent() userAgent?: string,
   ) {
     const { session, rawSessionToken } = await this.authService.login({
       dto,
@@ -128,25 +125,5 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto);
-  }
-
-  @Get('sessions')
-  getSessions(@CurrentUser('id') userId: string) {
-    return this.authService.getSessions(userId);
-  }
-
-  @Delete('sessions/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  deleteSession(
-    @CurrentUser('id') userId: string,
-    @Param('id') sessionId: string,
-  ) {
-    return this.authService.deleteSession({ userId, sessionId });
-  }
-
-  @AllowUnverified()
-  @Get('me')
-  me(@CurrentUser() user: User) {
-    return user;
   }
 }

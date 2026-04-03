@@ -6,8 +6,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  findById(userId: string) {
-    return this.prismaService.user.findFirst({ where: { id: userId } });
+  findById(id: string) {
+    return this.prismaService.user.findUnique({ where: { id } });
   }
 
   findByEmail(email: string) {
@@ -31,7 +31,7 @@ export class UsersService {
   markEmailVerified(userId: string) {
     return this.prismaService.user.update({
       where: { id: userId },
-      data: { isEmailVerified: true },
+      data: { isVerified: true },
     });
   }
 

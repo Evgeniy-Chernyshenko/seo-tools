@@ -1,12 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, getSchemaPath, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import { SESSION_TOKEN_COOKIE_NAME } from './auth/auth.constants';
+import { ErrorDto } from './common/error.dto';
+import { ConfigService } from '@nestjs/config';
+import { Env } from './app-config/app-config.schema';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const configService = app.get(ConfigService<Env, true>);
 
   app.use(cookieParser());
 
@@ -19,15 +24,46 @@ async function bootstrap() {
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
       .setTitle('SEOTools API')
-      .setDescription('API документация SEOTools')
       .addCookieAuth(SESSION_TOKEN_COOKIE_NAME)
       .addSecurityRequirements('cookie')
       .build();
 
-    const document = SwaggerModule.createDocument(app, config);
+    const document = SwaggerModule.createDocument(app, config, {
+      extraModels: [ErrorDto],
+    });
+
+    const HTTP_METHODS = [
+      'get',
+      'post',
+      'put',
+      'patch',
+      'delete',
+      'head',
+      'options',
+    ] as const;
+
+    Object.values(document.paths).forEach((pathItem) => {
+      HTTP_METHODS.forEach((method) => {
+        const operation = pathItem[method];
+
+        if (!operation?.responses || operation.responses['default']) {
+          return;
+        }
+
+        operation.responses['default'] = {
+          description: 'Error response',
+          content: {
+            'application/json': {
+              schema: { $ref: getSchemaPath(ErrorDto) },
+            },
+          },
+        };
+      });
+    });
+
     SwaggerModule.setup('api/docs', app, document);
   }
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(configService.get('PORT', { infer: true }));
 }
-bootstrap();
+bootstrap().catch(() => {});

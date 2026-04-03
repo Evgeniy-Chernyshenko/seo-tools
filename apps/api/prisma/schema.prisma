@@ -14,13 +14,13 @@ datasource db {
 }
 
 model User {
-  id              String   @id @default(cuid())
-  email           String   @unique
-  passwordHash    String?
-  role            UserRole @default(USER)
-  isEmailVerified Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String?
+  role         UserRole @default(USER)
+  isVerified   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   sessions          Session[]
   verificationCodes VerificationCode[]
@@ -35,7 +35,7 @@ enum UserRole {
 model Session {
   id        String   @id @default(cuid())
   tokenHash String   @unique
-  ip        String?
+  ip        String
   userAgent String?
   country   String?
   city      String?

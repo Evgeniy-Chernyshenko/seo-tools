@@ -13,12 +13,14 @@ import { IS_ALLOW_UNVERIFIED_KEY } from './decorators/allow-unverified.decorator
 import { UserRole } from 'generated/prisma/enums';
 import { ROLES_KEY } from './decorators/roles.decorator';
 import { SESSION_TOKEN_COOKIE_NAME } from './auth.constants';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly sessionsService: SessionsService,
+    private readonly usersService: UsersService,
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
@@ -44,7 +46,7 @@ export class AuthGuard implements CanActivate {
       [ctx.getHandler(), ctx.getClass()],
     );
 
-    if (!isAllowUnverified && !request.user.isEmailVerified) {
+    if (!isAllowUnverified && !request.user.isVerified) {
       throw new ForbiddenException('Email не подтверждён');
     }
 
@@ -73,9 +75,15 @@ export class AuthGuard implements CanActivate {
       return;
     }
 
+    const user = await this.usersService.findById(session.userId);
+
+    if (!user) {
+      return;
+    }
+
     const refreshedSession = await this.sessionsService.refresh(session.id);
 
-    request.user = session.user;
+    request.user = user;
     request.session = refreshedSession;
     request.rawSessionToken = rawToken;
   }

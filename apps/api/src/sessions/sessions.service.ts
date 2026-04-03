@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 import { Env } from 'src/app-config/app-config.schema';
@@ -47,16 +47,11 @@ export class SessionsService {
     return { session, rawSessionToken };
   }
 
-  findById(id: string) {
-    return this.prismaService.session.findUnique({ where: { id } });
-  }
-
   findByToken(rawToken: string) {
     const tokenHash = hashString(rawToken);
 
     return this.prismaService.session.findUnique({
       where: { tokenHash },
-      include: { user: true },
     });
   }
 
@@ -88,17 +83,20 @@ export class SessionsService {
     return this.prismaService.session.deleteMany({ where: { userId } });
   }
 
-  // TODO: пока не используется
-  deleteAllByUserIdExcept({
-    userId,
+  async deleteByIdForUser({
     sessionId,
+    userId,
   }: {
-    userId: string;
     sessionId: string;
+    userId: string;
   }) {
-    return this.prismaService.session.deleteMany({
-      where: { userId, id: { not: sessionId } },
+    const result = await this.prismaService.session.deleteMany({
+      where: { id: sessionId, userId },
     });
+
+    if (result.count === 0) {
+      throw new NotFoundException('Сессия не найдена');
+    }
   }
 
   private generateToken() {

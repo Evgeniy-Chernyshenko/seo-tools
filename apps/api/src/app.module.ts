@@ -6,9 +6,17 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { FirstErrorValidationPipe } from './common/first-error-validation.pipe';
 import { MailModule } from './mail/mail.module';
+import { SessionsModule } from './sessions/sessions.module';
 
 @Module({
-  imports: [AppConfigModule, PrismaModule, MailModule, UsersModule, AuthModule],
+  imports: [
+    AppConfigModule,
+    PrismaModule,
+    MailModule,
+    AuthModule,
+    UsersModule,
+    SessionsModule,
+  ],
   providers: [
     {
       provide: APP_PIPE,

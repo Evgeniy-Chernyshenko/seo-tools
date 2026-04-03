@@ -2,14 +2,13 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { SessionsService } from '../sessions/sessions.service';
 import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { VerificationCodeType } from 'generated/prisma/client';
+import { User, VerificationCodeType } from 'generated/prisma/client';
 import { ConfigService } from '@nestjs/config';
 import { Env } from 'src/app-config/app-config.schema';
 import {
@@ -25,6 +24,7 @@ import {
   verifyPassword,
 } from './auth.helpers';
 import { getExpiresAt, hashString } from 'src/common/common.helpers';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class AuthService {
@@ -43,19 +43,27 @@ export class AuthService {
   }: {
     dto: RegisterDto;
     ip: string;
-    userAgent: string;
+    userAgent?: string;
   }) {
-    const existingUser = await this.usersService.findByEmail(dto.email);
-
-    if (existingUser) {
-      throw new ConflictException('Email уже занят');
-    }
-
     const passwordHash = await createPasswordHashWithSalt(dto.password);
-    const user = await this.usersService.create({
-      email: dto.email,
-      passwordHash,
-    });
+
+    let user: User;
+
+    try {
+      user = await this.usersService.create({
+        email: dto.email,
+        passwordHash,
+      });
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Email уже занят');
+      }
+
+      throw error;
+    }
 
     const { session, rawSessionToken } = await this.sessionsService.create({
       userId: user.id,
@@ -79,7 +87,7 @@ export class AuthService {
   }: {
     dto: LoginDto;
     ip: string;
-    userAgent: string;
+    userAgent?: string;
   }) {
     const user = await this.usersService.findByEmail(dto.email);
 
@@ -174,29 +182,9 @@ export class AuthService {
       deleteAfter: true,
     });
 
-    const passwordHash = await createPasswordHashWithSalt(dto.newPassword);
+    const passwordHash = await createPasswordHashWithSalt(dto.password);
     await this.usersService.updatePassword({ userId: user.id, passwordHash });
     await this.sessionsService.deleteAllByUserId(user.id);
-  }
-
-  getSessions(userId: string) {
-    return this.sessionsService.findAllByUserId(userId);
-  }
-
-  async deleteSession({
-    userId,
-    sessionId,
-  }: {
-    userId: string;
-    sessionId: string;
-  }) {
-    const session = await this.sessionsService.findById(sessionId);
-
-    if (!session || session.userId !== userId) {
-      throw new NotFoundException('Сессия не найдена');
-    }
-
-    await this.sessionsService.deleteById(sessionId);
   }
 
   private async createAndSendCode({
@@ -225,6 +213,18 @@ export class AuthService {
       },
     });
 
+    this.sendCode({ email, type, code }).catch(() => {});
+  }
+
+  private sendCode({
+    email,
+    type,
+    code,
+  }: {
+    email: string;
+    type: VerificationCodeType;
+    code: string;
+  }) {
     switch (type) {
       case VerificationCodeType.EMAIL_CONFIRMATION:
         return this.mailService.sendEmailConfirmationCode({
