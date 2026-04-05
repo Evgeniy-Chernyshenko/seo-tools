@@ -48,6 +48,16 @@ export class UsersService {
     });
   }
 
+  upsertByOAuth(email: string) {
+    return this.prismaService.user.upsert({
+      where: { email },
+      create: { email, isVerified: true },
+      update: {
+        isVerified: true,
+      },
+    });
+  }
+
   private async isFirstUser() {
     const count = await this.prismaService.user.count();
 

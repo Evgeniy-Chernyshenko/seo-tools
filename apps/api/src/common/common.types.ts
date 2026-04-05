@@ -5,5 +5,6 @@ export interface AppRequest extends Request {
   user?: User;
   session?: Session;
   rawSessionToken?: string;
+  redirect?: string;
   cookies: Record<string, string | undefined>;
 }

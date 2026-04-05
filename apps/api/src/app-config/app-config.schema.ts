@@ -17,6 +17,21 @@ export const envSchema = z.object({
 
   SESSION_TTL_MS: z.coerce.number(),
   CODE_TTL_MS: z.coerce.number(),
+
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
+  GOOGLE_REDIRECT_URI: z.string(),
+
+  YANDEX_CLIENT_ID: z.string(),
+  YANDEX_CLIENT_SECRET: z.string(),
+  YANDEX_REDIRECT_URI: z.string(),
+
+  GITHUB_CLIENT_ID: z.string(),
+  GITHUB_CLIENT_SECRET: z.string(),
+  GITHUB_REDIRECT_URI: z.string(),
+
+  OAUTH_SUCCESS_REDIRECT_URL: z.string(),
+  OAUTH_ERROR_REDIRECT_URL: z.string(),
 });
 
 export type Env = z.infer<typeof envSchema>;

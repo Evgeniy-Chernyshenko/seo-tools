@@ -6,14 +6,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AppRequest } from 'src/auth/auth.types';
+import { AppRequest } from 'src/common/common.types';
 import { SessionsService } from 'src/sessions/sessions.service';
-import { IS_PUBLIC_KEY } from './decorators/public.decorator';
-import { IS_ALLOW_UNVERIFIED_KEY } from './decorators/allow-unverified.decorator';
 import { UserRole } from 'generated/prisma/enums';
-import { ROLES_KEY } from './decorators/roles.decorator';
-import { SESSION_TOKEN_COOKIE_NAME } from './auth.constants';
 import { UsersService } from 'src/users/users.service';
+import { IS_PUBLIC_KEY } from 'src/common/decorators/public.decorator';
+import { IS_ALLOW_UNVERIFIED_KEY } from 'src/common/decorators/allow-unverified.decorator';
+import { ROLES_KEY } from 'src/common/decorators/roles.decorator';
+import { SESSION_TOKEN_COOKIE_NAME } from 'src/common/common.constants';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { AppRequest } from '../auth.types';
+import { AppRequest } from '../common.types';
 
 export const UserAgent = createParamDecorator(
   (_: unknown, context: ExecutionContext) => {

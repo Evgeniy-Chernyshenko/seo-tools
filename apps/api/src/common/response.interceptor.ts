@@ -7,11 +7,14 @@ import {
 } from '@nestjs/common';
 import { catchError, Observable, tap } from 'rxjs';
 import { Response } from 'express';
-import { SESSION_TOKEN_COOKIE_NAME } from './auth.constants';
-import { AppRequest } from 'src/auth/auth.types';
+import { AppRequest } from 'src/common/common.types';
+import {
+  DEFAULT_COOKIE_OPTIONS,
+  SESSION_TOKEN_COOKIE_NAME,
+} from './common.constants';
 
 @Injectable()
-export class SessionTokenCookieInterceptor implements NestInterceptor {
+export class ResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<AppRequest>();
     const response = context.switchToHttp().getResponse<Response>();
@@ -25,11 +28,13 @@ export class SessionTokenCookieInterceptor implements NestInterceptor {
         }
 
         response.cookie(SESSION_TOKEN_COOKIE_NAME, request.rawSessionToken, {
-          httpOnly: true,
-          secure: true,
-          sameSite: 'lax',
+          ...DEFAULT_COOKIE_OPTIONS,
           expires: request.session.expiresAt,
         });
+
+        if (request.redirect) {
+          response.redirect(request.redirect);
+        }
       }),
 
       catchError((error: unknown) => {

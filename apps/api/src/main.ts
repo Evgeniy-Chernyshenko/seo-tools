@@ -3,10 +3,10 @@ import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
 import { DocumentBuilder, getSchemaPath, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
-import { SESSION_TOKEN_COOKIE_NAME } from './auth/auth.constants';
 import { ErrorDto } from './common/error.dto';
 import { ConfigService } from '@nestjs/config';
 import { Env } from './app-config/app-config.schema';
+import { SESSION_TOKEN_COOKIE_NAME } from './common/common.constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

@@ -8,9 +8,9 @@ import {
 } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOkResponse } from '@nestjs/swagger';
 import { SessionsService } from './sessions.service';
-import { Serialize } from 'src/common/serialize.decorator';
+import { Serialize } from 'src/common/decorators/serialize.decorator';
 import { SessionResponseDto } from './sessions.dto';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
 @Controller('sessions')
 export class SessionsController {

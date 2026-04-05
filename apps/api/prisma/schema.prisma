@@ -66,19 +66,19 @@ enum VerificationCodeType {
 }
 
 model OAuthAccount {
-  id             String        @id @default(cuid())
-  provider       OAuthProvider
+  id             String            @id @default(cuid())
+  providerName   OAuthProviderName
   providerUserId String
-  createdAt      DateTime      @default(now())
+  createdAt      DateTime          @default(now())
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerUserId])
+  @@unique([providerName, providerUserId])
 }
 
-enum OAuthProvider {
-  GOOGLE
-  YANDEX
-  GITHUB
+enum OAuthProviderName {
+  google
+  yandex
+  github
 }

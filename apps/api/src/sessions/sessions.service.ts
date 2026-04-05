@@ -20,7 +20,7 @@ export class SessionsService {
     city,
   }: {
     userId: string;
-    ip?: string;
+    ip: string;
     userAgent?: string;
     country?: string;
     city?: string;

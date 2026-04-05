@@ -8,10 +8,6 @@ import {
   Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CurrentUser } from './decorators/current-user.decorator';
-import { CurrentSession } from './decorators/current-session.decorator';
-import { Public } from './decorators/public.decorator';
-import { AllowUnverified } from './decorators/allow-unverified.decorator';
 import type { User, Session } from 'generated/prisma/client';
 import {
   RegisterDto,
@@ -21,8 +17,12 @@ import {
   VerifyResetPasswordCodeDto,
   ResetPasswordDto,
 } from './auth.dto';
-import { type AppRequest } from 'src/auth/auth.types';
-import { UserAgent } from './decorators/user-agent.decorator';
+import { type AppRequest } from 'src/common/common.types';
+import { Public } from 'src/common/decorators/public.decorator';
+import { UserAgent } from 'src/common/decorators/user-agent.decorator';
+import { AllowUnverified } from 'src/common/decorators/allow-unverified.decorator';
+import { CurrentSession } from 'src/common/decorators/current-session.decorator';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
 @Controller('auth')
 export class AuthController {
