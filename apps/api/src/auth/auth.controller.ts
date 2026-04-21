@@ -23,6 +23,8 @@ import { UserAgent } from 'src/common/decorators/user-agent.decorator';
 import { AllowUnverified } from 'src/common/decorators/allow-unverified.decorator';
 import { CurrentSession } from 'src/common/decorators/current-session.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { ApiNoContentResponse } from '@nestjs/swagger';
+import { SESSION_TOKEN_COOKIE_NAME } from 'src/common/common.constants';
 
 @Controller('auth')
 export class AuthController {
@@ -31,6 +33,15 @@ export class AuthController {
   @Public()
   @Post('register')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    headers: {
+      'Set-Cookie': {
+        schema: {
+          example: `${SESSION_TOKEN_COOKIE_NAME}=string`,
+        },
+      },
+    },
+  })
   async register(
     @Body() dto: RegisterDto,
     @Req() request: AppRequest,
@@ -50,6 +61,15 @@ export class AuthController {
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    headers: {
+      'Set-Cookie': {
+        schema: {
+          example: `${SESSION_TOKEN_COOKIE_NAME}=string`,
+        },
+      },
+    },
+  })
   async login(
     @Body() dto: LoginDto,
     @Req() request: AppRequest,
@@ -69,6 +89,15 @@ export class AuthController {
   @AllowUnverified()
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    headers: {
+      'Set-Cookie': {
+        schema: {
+          example: `${SESSION_TOKEN_COOKIE_NAME}=`,
+        },
+      },
+    },
+  })
   async logout(@CurrentSession() session: Session, @Req() request: AppRequest) {
     await this.authService.logout(session.id);
 
@@ -79,6 +108,15 @@ export class AuthController {
   @AllowUnverified()
   @Post('logout-all')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    headers: {
+      'Set-Cookie': {
+        schema: {
+          example: `${SESSION_TOKEN_COOKIE_NAME}=`,
+        },
+      },
+    },
+  })
   async logoutAll(
     @CurrentUser('id') userId: string,
     @Req() request: AppRequest,
@@ -103,6 +141,7 @@ export class AuthController {
     return this.authService.resendEmailVerificationCode({
       userId: user.id,
       email: user.email,
+      isVerified: user.isVerified,
     });
   }
 
@@ -123,7 +162,28 @@ export class AuthController {
   @Public()
   @Post('reset-password')
   @HttpCode(HttpStatus.NO_CONTENT)
-  resetPassword(@Body() dto: ResetPasswordDto) {
-    return this.authService.resetPassword(dto);
+  @ApiNoContentResponse({
+    headers: {
+      'Set-Cookie': {
+        schema: {
+          example: `${SESSION_TOKEN_COOKIE_NAME}=string`,
+        },
+      },
+    },
+  })
+  async resetPassword(
+    @Body() dto: ResetPasswordDto,
+    @Req() request: AppRequest,
+    @Ip() ip: string,
+    @UserAgent() userAgent?: string,
+  ) {
+    const { session, rawSessionToken } = await this.authService.resetPassword({
+      dto,
+      ip,
+      userAgent,
+    });
+
+    request.session = session;
+    request.rawSessionToken = rawSessionToken;
   }
 }

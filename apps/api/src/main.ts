@@ -23,7 +23,7 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
-      .setTitle('SEOTools API')
+      .setTitle('SEMTools API')
       .addCookieAuth(SESSION_TOKEN_COOKIE_NAME)
       .addSecurityRequirements('cookie')
       .build();

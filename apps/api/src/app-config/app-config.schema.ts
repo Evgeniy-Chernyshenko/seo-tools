@@ -32,6 +32,8 @@ export const envSchema = z.object({
 
   OAUTH_SUCCESS_REDIRECT_URL: z.string(),
   OAUTH_ERROR_REDIRECT_URL: z.string(),
+
+  APP_URL: z.string(),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -4,5 +4,6 @@ export const ROUTES = {
   VERIFY_EMAIL: "/verify-email",
   LOGIN: "/login",
   RESET_PASSWORD: "/reset-password",
-  PROJECTS: "/projects",
 } as const;
+
+export const APP_BASENAME = "/app";

@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { SessionsService } from '../sessions/sessions.service';
@@ -96,7 +95,7 @@ export class AuthService {
       !user.passwordHash ||
       !(await verifyPassword(dto.password, user.passwordHash))
     )
-      throw new UnauthorizedException('Неверный email или пароль');
+      throw new BadRequestException('Неверный email или пароль');
 
     return this.sessionsService.create({
       userId: user.id,
@@ -127,10 +126,16 @@ export class AuthService {
   async resendEmailVerificationCode({
     userId,
     email,
+    isVerified,
   }: {
     userId: string;
     email: string;
+    isVerified: boolean;
   }) {
+    if (isVerified) {
+      throw new BadRequestException('Email уже подтвержден');
+    }
+
     await this.createAndSendCode({
       userId,
       email,
@@ -166,7 +171,15 @@ export class AuthService {
     });
   }
 
-  async resetPassword(dto: ResetPasswordDto) {
+  async resetPassword({
+    dto,
+    ip,
+    userAgent,
+  }: {
+    dto: ResetPasswordDto;
+    ip: string;
+    userAgent?: string;
+  }) {
     const user = await this.usersService.findByEmail(dto.email);
 
     if (!user) {
@@ -185,6 +198,14 @@ export class AuthService {
     const passwordHash = await createPasswordHashWithSalt(dto.password);
     await this.usersService.updatePassword({ userId: user.id, passwordHash });
     await this.sessionsService.deleteAllByUserId(user.id);
+
+    const { session, rawSessionToken } = await this.sessionsService.create({
+      userId: user.id,
+      ip,
+      userAgent,
+    });
+
+    return { session, rawSessionToken };
   }
 
   private async createAndSendCode({

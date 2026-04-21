@@ -38,7 +38,7 @@ export class AuthGuard implements CanActivate {
     }
 
     if (!request.user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Необходима аутентификация');
     }
 
     const isAllowUnverified = this.reflector.getAllAndOverride<boolean>(
@@ -56,7 +56,7 @@ export class AuthGuard implements CanActivate {
     ]);
 
     if (roles && !roles.includes(request.user.role)) {
-      throw new ForbiddenException();
+      throw new ForbiddenException('Недостаточно прав');
     }
 
     return true;
