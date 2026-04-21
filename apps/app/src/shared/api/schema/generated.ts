@@ -203,9 +203,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["OAuthController_prepareAuthRedirect_v1"];
+        get?: never;
         put?: never;
-        post?: never;
+        post: operations["OAuthController_prepareAuthRedirect_v1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -318,6 +318,7 @@ export interface operations {
         responses: {
             204: {
                 headers: {
+                    "Set-Cookie"?: unknown;
                     [name: string]: unknown;
                 };
                 content?: never;
@@ -348,6 +349,7 @@ export interface operations {
         responses: {
             204: {
                 headers: {
+                    "Set-Cookie"?: unknown;
                     [name: string]: unknown;
                 };
                 content?: never;
@@ -374,6 +376,7 @@ export interface operations {
         responses: {
             204: {
                 headers: {
+                    "Set-Cookie"?: unknown;
                     [name: string]: unknown;
                 };
                 content?: never;
@@ -400,6 +403,7 @@ export interface operations {
         responses: {
             204: {
                 headers: {
+                    "Set-Cookie"?: unknown;
                     [name: string]: unknown;
                 };
                 content?: never;
@@ -546,6 +550,7 @@ export interface operations {
         responses: {
             204: {
                 headers: {
+                    "Set-Cookie"?: unknown;
                     [name: string]: unknown;
                 };
                 content?: never;
@@ -628,7 +633,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            404: {
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };

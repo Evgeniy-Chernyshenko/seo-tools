@@ -11,6 +11,7 @@ import { useTheme } from "../../theme-switcher";
 import { YandexIcon } from "@/shared/ui/icons/yandex-icon";
 import { GoogleIcon } from "@/shared/ui/icons/google-icon";
 import type { ReactNode } from "react";
+import { useOAuth } from "../model/use-oauth";
 
 export const AuthCardLayout = ({
   title,
@@ -24,6 +25,7 @@ export const AuthCardLayout = ({
   additional: ReactNode;
 }) => {
   const { isLight, isDark } = useTheme();
+  const oAuth = useOAuth();
 
   return (
     <Paper
@@ -50,10 +52,21 @@ export const AuthCardLayout = ({
         <Divider label="Или войти через" />
 
         <Group justify="center">
-          <Button leftSection={<YandexIcon />} variant="default">
+          <Button
+            leftSection={<YandexIcon />}
+            variant="default"
+            onClick={() => oAuth.mutate("yandex")}
+            loading={oAuth.isPendingProvider("yandex")}
+          >
             Яндекс
           </Button>
-          <Button leftSection={<GoogleIcon />} variant="default">
+
+          <Button
+            leftSection={<GoogleIcon />}
+            variant="default"
+            onClick={() => oAuth.mutate("google")}
+            loading={oAuth.isPendingProvider("google")}
+          >
             Google
           </Button>
         </Group>

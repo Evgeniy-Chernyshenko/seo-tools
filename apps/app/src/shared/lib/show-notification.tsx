@@ -13,15 +13,17 @@ const notificationConfig: Record<
   error: { icon: IconX, color: "red" },
 };
 
-export function showNotification({
+export const showNotification = ({
   title,
   message,
   type = "success",
+  id,
 }: {
   title: string;
   message: string;
   type?: NotificationType;
-}) {
+  id?: string;
+}) => {
   const { icon: IconComponent, color } = notificationConfig[type];
 
   notifications.show({
@@ -30,5 +32,6 @@ export function showNotification({
     position: "top-right",
     icon: <IconComponent />,
     color,
+    id,
   });
-}
+};

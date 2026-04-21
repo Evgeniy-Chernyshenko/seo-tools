@@ -1,4 +1,15 @@
-import { Controller, Get, Ip, Param, Query, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Ip,
+  Param,
+  Post,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common';
 import {
   OAuthProviderCallbackQueryDto,
   OAuthProviderParamsDto,
@@ -26,7 +37,8 @@ export class OAuthController {
     private readonly configService: ConfigService<Env, true>,
   ) {}
 
-  @Get(':provider')
+  @Post(':provider')
+  @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: OAuthProviderResponseDto })
   prepareAuthRedirect(
     @Param() params: OAuthProviderParamsDto,
