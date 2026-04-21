@@ -26,10 +26,6 @@ export const envSchema = z.object({
   YANDEX_CLIENT_SECRET: z.string(),
   YANDEX_REDIRECT_URI: z.string(),
 
-  GITHUB_CLIENT_ID: z.string(),
-  GITHUB_CLIENT_SECRET: z.string(),
-  GITHUB_REDIRECT_URI: z.string(),
-
   OAUTH_SUCCESS_REDIRECT_URL: z.string(),
   OAUTH_ERROR_REDIRECT_URL: z.string(),
 

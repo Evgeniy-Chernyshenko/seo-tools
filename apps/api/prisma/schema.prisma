@@ -80,5 +80,4 @@ model OAuthAccount {
 enum OAuthProviderName {
   google
   yandex
-  github
 }

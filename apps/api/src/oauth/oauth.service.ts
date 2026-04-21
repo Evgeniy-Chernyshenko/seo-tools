@@ -3,7 +3,6 @@ import { GoogleOAuthProvider } from './providers/google.provider';
 import { OAuthProviderName } from 'generated/prisma/enums';
 import { OAuthProvider } from './oauth.types';
 import { YandexOAuthProvider } from './providers/yandex.provider';
-import { GithubOAuthProvider } from './providers/github.provider';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from 'generated/prisma/client';
 import { SessionsService } from 'src/sessions/sessions.service';
@@ -19,12 +18,10 @@ export class OAuthService {
     private readonly usersService: UsersService,
     private readonly googleOAuthProvider: GoogleOAuthProvider,
     private readonly yandexOAuthProvider: YandexOAuthProvider,
-    private readonly githubOAuthProvider: GithubOAuthProvider,
   ) {
     this.providers = {
       [OAuthProviderName.google]: googleOAuthProvider,
       [OAuthProviderName.yandex]: yandexOAuthProvider,
-      [OAuthProviderName.github]: githubOAuthProvider,
     };
   }
 

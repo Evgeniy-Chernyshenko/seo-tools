@@ -655,7 +655,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                provider: "google" | "yandex" | "github";
+                provider: "google" | "yandex";
             };
             cookie?: never;
         };
@@ -688,7 +688,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                provider: "google" | "yandex" | "github";
+                provider: "google" | "yandex";
             };
             cookie?: never;
         };
